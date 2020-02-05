@@ -8,14 +8,14 @@ class Durak:
 
 
     def all_cards(self): # генерирует все существующие карты в колоде. выход: целая колода (36 карт)
-        self.card_type = ['6','7','8','9','10','valet','dama','korol','tuz']
-        self.spades = list(map(lambda x: x + '_piki', self.card_type))       #
-        self.club = list(map(lambda x: x + '_kresti', self.card_type))       # map применяет к каждому элементу списка переданную функцию lambda
-        self.hearts = list(map(lambda x: x + '_chervy', self.card_type))     #
-        self.diamonds = list(map(lambda x: x + '_bubi', self.card_type))     #
-        self.cards = self.spades + self.club + self.hearts + self.diamonds
-        random.shuffle(self.cards) # random.shuffle - перемешивает лист в случайном порядке
-        return self.cards
+        self.card_type = {'6': 1,'7': 2,'8': 3,'9': 4,'10': 5,'valet': 6,'dama': 7,'korol': 8,'tuz': 9}
+        self.spades = dict(map(lambda x: x[0] + '_piki', self.card_type))     #
+        self.club = dict(map(lambda x: x[0] + '_kresti', self.card_type))       # map применяет к каждому элементу списка переданную функцию lambda
+        self.hearts = dict(map(lambda x: x[0] + '_chervy', self.card_type))     #
+        self.diamonds = dict(map(lambda x: x[0] + '_bubi', self.card_type))   #
+        # self.cards = dict(self.spades.items() + self.club.items() + self.hearts.items() + self.diamonds.items())
+        # random.shuffle(self.cards) # random.shuffle - перемешивает лист в случайном порядке
+        # return self.cards
 
     def gen_cards(self): # раздает карты, не больше 6 в начальной руке. выход: два списка с уникальными картами у каждого игрока
 
@@ -44,18 +44,16 @@ class Durak:
     def get_mast(self, card):    # узнает масть карты
         list = self.card.rsplit('_')
         self.mast = list[1]
-        return print(self.mast)
+        return self.mast
 
-    # def cards_values_rules(self): # функция, определяющая страшенство карт
-
+    def cards_value_sort(self, hand): # функция, сортирующая карты по старшенству, hand - список карт в руке (рука)
+        for card in hand:
+            if Durak.get_mast(card) == Durak.get_mast(self.kozyr_card):
+                self.strong_dict = {}
 
 
 Durak.all_cards(Durak)
-Durak.gen_cards(Durak)
-Durak.kozyr(Durak)
-print('Введите карту ')
-card = list(input())
-Durak.get_mast(Durak, card)
+#
 
 
 
