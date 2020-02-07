@@ -4,7 +4,6 @@ import re
 
 class Durak:
     def __init__(self): # инициализатор класса
-
         self.bito = []   # атрибуты класса
         self.koloda = []
 
@@ -62,9 +61,6 @@ class Durak:
     def gen_kozyr_list(self): # пересоздает список с картами, имеющие масть козыря, изменяя силу карт
         kozyr_card = random.choice(self.cards)
         self.kozyr = kozyr_card
-        self.cards.append(kozyr_card)  # кладет козыря в конец колоды
-        self.cards.remove(self.cards[0])
-
         new_list = self.kozyr[0].rsplit('_')
         self.mast = new_list[1]
         for card in self.cards:
@@ -88,22 +84,29 @@ class Durak:
 
     def game_start(self):
         self.table = []
-        if len(self.player_cards) > 0 and len(self.comp_cards) > 0 and self.turn == True: # not self.table - проверяет, пустой ли список(стол)
+        if len(self.player_cards) > 0 and len(self.comp_cards) > 0 and self.turn: # not self.table - проверяет, пустой ли список(стол)
             print("-------Ваш ход-------")
-            tmp_card = str(input('Выберите карту'))
-            for card in self.player_cards:
-                if tmp_card == str(card[0]):
-                    result = card[0]
-                # else: result = 'У вас нет такой карты'
+            bool_card = ""
+            while not bool_card:
+                tmp_card = str(input('Выберите карту'))
+                for card in self.player_cards:
+                    if tmp_card == card[0]:
+                        tmp_card = card[0]
+                        bool_card = tmp_card
+                        print('Карта найдена')
+                        self.table.append(tmp_card)
+                        self.player_cards.remove(card)
+                        print('На столе: ', self.table)
+                        return print('Ваши карты: ', list((item[0] for item in self.player_cards))), print('Карты помпьютера: ', list((item[0] for item in self.comp_cards)))
+
             # if tmp_card in tmp_list:
             #     result = re.search(tmp_card, (item[0] for item in self.player_cards))
             #     self.player_cards.remove(result)
             #     self.table.append(result.group(0))
             # return print('На столе: ', self.table)
-            return print(result)
 
         else:
-            print('Ход компьютера')
+            print('--------Ход компьютера--------')
             print()
             tmp_card = random.choice(self.comp_cards)
             self.table.append(tmp_card)
