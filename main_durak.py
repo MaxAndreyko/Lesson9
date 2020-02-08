@@ -69,7 +69,7 @@ class Durak:
         return self.cards
 
     def get_mast(self, card):    # узнает масть карты
-        new_list = self.card.rsplit('_')
+        new_list = card.rsplit('_')
         self.mast = new_list[1]
         return self.mast
 
@@ -91,42 +91,63 @@ class Durak:
                 tmp_card = str(input('Выберите карту'))
                 for card in self.player_cards:
                     if tmp_card == card[0]:
-                        tmp_card = card[0]
+                        tmp_card = card
                         bool_card = tmp_card
                         print('Карта найдена')
                         self.table.append(tmp_card)
                         self.player_cards.remove(card)
-                        print('На столе: ', self.table)
+                        print('На столе: ', self.table[0][0])
                         return print('Ваши карты: ', list((item[0] for item in self.player_cards))), print('Карты помпьютера: ', list((item[0] for item in self.comp_cards)))
-
+                        self.turn = False
             # if tmp_card in tmp_list:
             #     result = re.search(tmp_card, (item[0] for item in self.player_cards))
             #     self.player_cards.remove(result)
             #     self.table.append(result.group(0))
             # return print('На столе: ', self.table)
 
-        else:
+        elif len(self.player_cards) > 0 and len(self.comp_cards) > 0 and self.turn == False:
             print('--------Ход компьютера--------')
             print()
             tmp_card = random.choice(self.comp_cards)
             self.table.append(tmp_card)
             self.comp_cards.remove(tmp_card)
             return print('На столе: ', self.table[0][0])
+            self.turn = True
 
 
-    # def game(self):
-    #     count = 0
-    #     if len(self.player_cards) > 0 & len(self.comp_cards) > 0 & count == 0:
-    #         print("Ваш ход")
-    #         self.table = input()
-    #         print('Карты на столе ', self.table)
-    #     else:
-#
+    def comp_turn(self):
+        if len(self.comp_cards) > 0 and len(self.player_cards) > 0 and self.turn == False and len(self.table) == 0: # выполняется, если начинает ходить компьютер
+            print('--------Ход компьютера--------')
+            print()
+            tmp_card = random.choice(self.comp_cards)
+            self.table.append(tmp_card)
+            self.comp_cards.remove(tmp_card)
+            return print('На столе: ', self.table[0][0])
+            self.turn = True
+
+        elif len(self.comp_cards) > 0 and self.turn and len(self.table) != 0: # если ходил игрок, а компьютер отбивается
+            avaliable_cards_to_beat = [] # список с картами из руки, которыми можно побить
+            changed_table = []   # список [[масть, сила].....[масть, сила]...]
+            changed_table = copy.deepcopy(self.table)
+            for i in range(len(changed_table)):
+                changed_table[i][0] = self.get_mast(Durak, changed_table[i][0])
+            for i in range(len(self.comp_cards)):
+                if self.get_mast(Durak, self.comp_cards[i][0]) == changed_table[i][0]:
+                    avaliable_cards_to_beat[i] = self.comp_cards[i]
+            print(avaliable_cards_to_beat)
+
+
+
+
+
+
+
 Durak.all_cards(Durak)
 Durak.gen_kozyr_list(Durak)
 Durak.gen_cards(Durak)
 Durak.whos_first_turn(Durak)
 Durak.game_start(Durak)
+Durak.comp_turn(Durak)
 
 
 
