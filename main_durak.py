@@ -9,6 +9,7 @@ class Durak:
 
 
 
+
     def all_cards(self): # генерирует все существующие карты в колоде. выход: целая колода (36 карт)
         self.card_type = [['6', 1], ['7', 2], ['8', 3], ['9', 4], ['10', 5], ['valet', 6], ['dama', 7], ['korol', 8], ['tuz', 9]] # self.card_type[i][1] - "сила" карты
 
@@ -126,17 +127,41 @@ class Durak:
             self.turn = True
 
         elif len(self.comp_cards) > 0 and self.turn and len(self.table) != 0: # если ходил игрок, а компьютер отбивается
-            avaliable_cards_to_beat = [] # список с картами из руки, которыми можно побить
+            c_avble_cards_to_beat = [] # список с картами из руки, которыми можно побить
             changed_table = []   # список [[масть, сила].....[масть, сила]...]
             changed_table = copy.deepcopy(self.table)
             for i in range(len(changed_table)):
                 changed_table[i][0] = self.get_mast(Durak, changed_table[i][0])
+
             for i in range(len(self.comp_cards)):
-                if self.get_mast(Durak, self.comp_cards[i][0]) == changed_table[i][0]:
-                    avaliable_cards_to_beat[i] = self.comp_cards[i]
-            print(avaliable_cards_to_beat)
+                if self.get_mast(Durak, self.comp_cards[i][0]) == changed_table[0][0] and self.comp_cards[i][1] > changed_table[0][1] and len(changed_table) == 1:
+                    c_avble_cards_to_beat.append(self.comp_cards[i])
+
+            if not c_avble_cards_to_beat:
+                print('Компьюетр берет карту ')
+                self.comp_cards.append(self.table)
+                print(self.comp_cards)
+
+            self.beat_cards = []
+            if len(c_avble_cards_to_beat) > 0:
+                self.beat_cards.append(random.choice(c_avble_cards_to_beat))
+                print('Карты, которыми побили ', self.beat_cards[0][0])
+                print('На столе               ', self.table[0][0])
+
+            if len(self.avble_player_cards) > 0: # self.avble_player_cards - карты, которые может подкинуть игрок
+                # (!!!!!!НЕ ЗАБЫТЬ ИСП. В ФУНКЦИИ ИГРОКА!!!!!)
+                tmp_card = input('Если хотите подкинуть выберите карту, либо введите bito')
 
 
+
+
+
+            # avaliable_cards_to_beat = copy.deepcopy(self.comp_cards)
+            # for i in range(len(self.comp_cards)):
+            #     if self.get_mast(Durak, self.comp_cards[i][0]) != changed_table[0][0] and avaliable_cards_to_beat[i][1] < changed_table[0][1]:
+            #         avaliable_cards_to_beat.remove(avaliable_cards_to_beat[i])
+            #         print(len(avaliable_cards_to_beat))
+            # print(avaliable_cards_to_beat)
 
 
 
