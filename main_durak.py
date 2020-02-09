@@ -2,16 +2,15 @@ import random
 import copy
 import re
 
+
 class Durak:
-    def __init__(self): # инициализатор класса
-        self.bito = []   # атрибуты класса
+    def __init__(self):  # инициализатор класса
+        self.bito = []  # атрибуты класса
         self.koloda = []
 
-
-
-
-    def all_cards(self): # генерирует все существующие карты в колоде. выход: целая колода (36 карт)
-        self.card_type = [['6', 1], ['7', 2], ['8', 3], ['9', 4], ['10', 5], ['valet', 6], ['dama', 7], ['korol', 8], ['tuz', 9]] # self.card_type[i][1] - "сила" карты
+    def all_cards(self):  # генерирует все существующие карты в колоде. выход: целая колода (36 карт)
+        self.card_type = [['6', 1], ['7', 2], ['8', 3], ['9', 4], ['10', 5], ['valet', 6], ['dama', 7], ['korol', 8],
+                          ['tuz', 9]]  # self.card_type[i][1] - "сила" карты
 
         self.spades = copy.deepcopy(self.card_type)
         for i in range(len(self.spades)):
@@ -37,21 +36,23 @@ class Durak:
         random.shuffle(self.cards)
         return self.cards
 
-    def gen_cards(self): # раздает карты, не больше 6 в начальной руке. выход: два списка с уникальными картами у каждого игрока
+    def gen_cards(
+            self):  # раздает карты, не больше 6 в начальной руке. выход: два списка с уникальными картами у каждого игрока
 
         self.player_cards = []
         for card in range(6):
             player_card = random.choice(self.cards)  # random.choice - возвращает случайный элемент списка
             self.player_cards.append(player_card)  # добавляет в список игрока(в руку игрока) карту
-            self.cards.remove(player_card) # удаляет из общего числа карт сгенерированную карту
+            self.cards.remove(player_card)  # удаляет из общего числа карт сгенерированную карту
 
         self.comp_cards = []
         for card in range(6):
             comp_card = random.choice(self.cards)
-            self.comp_cards.append(comp_card)    # как и у игрока
+            self.comp_cards.append(comp_card)  # как и у игрока
             self.cards.remove(comp_card)
 
-        return print('Ваши карты: ', list((item[0] for item in self.player_cards))), print('Карты помпьютера: ', list((item[0] for item in self.comp_cards))), print('Козырь: ', self.kozyr[0])
+        return print('Ваши карты: ', list((item[0] for item in self.player_cards))), print('Карты помпьютера: ', list(
+            (item[0] for item in self.comp_cards))), print('Козырь: ', self.get_mast(Durak, self.kozyr[0]))
 
     # def kozyr(self): # выбирает козырь(карту) из оставшихся после раздачи карт в колоде. выход: выводит карту козырь
     #     self.kozyr_card = self.cards[0]       #
@@ -59,124 +60,201 @@ class Durak:
     #     self.cards.remove(self.cards[0])      #
     #     return print('Козырь: ', self.kozyr_card)
 
-    def gen_kozyr_list(self): # пересоздает список с картами, имеющие масть козыря, изменяя силу карт
+    def gen_kozyr_list(self):  # пересоздает список с картами, имеющие масть козыря, изменяя силу карт
         kozyr_card = random.choice(self.cards)
         self.kozyr = kozyr_card
         new_list = self.kozyr[0].rsplit('_')
-        self.mast = new_list[1]
+        self.mast_kozyr = new_list[1]
         for card in self.cards:
-            if self.mast in card[0]:
+            if self.mast_kozyr in card[0]:
                 card[1] = card[1] + 9
         return self.cards
 
-    def get_mast(self, card):    # узнает масть карты
+    def get_mast(self, card):  # узнает масть карты
         new_list = card.rsplit('_')
         self.mast = new_list[1]
         return self.mast
 
     def whos_first_turn(self):
-        player_smallest_card = min(item[1] for item in self.player_cards) # цикл перебора вторых элементов подсписков(силы)
+        player_smallest_card = min(item[1] for item in self.player_cards)
+        # цикл перебора вторых элементов подсписков(силы)
         comp_smallest_card = min(item[1] for item in self.comp_cards)
         if player_smallest_card < comp_smallest_card:
             self.turn = True
+            self.player_turn(Durak)
         else:
             self.turn = False
-        return self.turn
+            self.comp_turn(Durak)
 
     def game_start(self):
         self.table = []
-        if len(self.player_cards) > 0 and len(self.comp_cards) > 0 and self.turn: # not self.table - проверяет, пустой ли список(стол)
-            print("-------Ваш ход-------")
-            bool_card = ""
-            while not bool_card:
-                tmp_card = str(input('Выберите карту'))
-                for card in self.player_cards:
-                    if tmp_card == card[0]:
-                        tmp_card = card
-                        bool_card = tmp_card
-                        print('Карта найдена')
-                        self.table.append(tmp_card)
-                        self.player_cards.remove(card)
-                        print('На столе: ', self.table[0][0])
-                        return print('Ваши карты: ', list((item[0] for item in self.player_cards))), print('Карты помпьютера: ', list((item[0] for item in self.comp_cards)))
-                        self.turn = False
-            # if tmp_card in tmp_list:
-            #     result = re.search(tmp_card, (item[0] for item in self.player_cards))
-            #     self.player_cards.remove(result)
-            #     self.table.append(result.group(0))
-            # return print('На столе: ', self.table)
-
-        elif len(self.player_cards) > 0 and len(self.comp_cards) > 0 and self.turn == False:
-            print('--------Ход компьютера--------')
-            print()
-            tmp_card = random.choice(self.comp_cards)
-            self.table.append(tmp_card)
-            self.comp_cards.remove(tmp_card)
-            return print('На столе: ', self.table[0][0])
-            self.turn = True
-
+        self.gen_kozyr_list(Durak)
+        self.gen_cards(Durak)
+        self.whos_first_turn(Durak)
+        # self.comp_turn(Durak)
+        # if len(self.player_cards) > 0 and len(self.comp_cards) > 0 and self.turn: # not self.table - проверяет, пустой ли список(стол)
+        #     print("-------Ваш ход-------")
+        #     bool_card = ""
+        #     while not bool_card:
+        #         tmp_card = str(input('Выберите карту'))
+        #         for card in self.player_cards:
+        #             if tmp_card == card[0]:
+        #                 tmp_card = card
+        #                 bool_card = tmp_card
+        #                 print('Карта найдена')
+        #                 self.table.append(tmp_card)
+        #                 self.player_cards.remove(card)
+        #                 print('На столе: ', self.table[0][0])
+        #                 return print('Ваши карты: ', list((item[0] for item in self.player_cards))), print('Карты помпьютера: ', list((item[0] for item in self.comp_cards)))
+        #                 self.turn = False
+        #     # if tmp_card in tmp_list:
+        #     #     result = re.search(tmp_card, (item[0] for item in self.player_cards))
+        #     #     self.player_cards.remove(result)
+        #     #     self.table.append(result.group(0))
+        #     # return print('На столе: ', self.table)
+        #
+        # elif len(self.player_cards) > 0 and len(self.comp_cards) > 0 and self.turn == False:
+        #     print('--------Ход компьютера--------')
+        #     print()
+        #     tmp_card = random.choice(self.comp_cards)
+        #     self.table.append(tmp_card)
+        #     self.comp_cards.remove(tmp_card)
+        #     return print('На столе: ', self.table[0][0])
+        #     self.turn = True
 
     def comp_turn(self):
-        if len(self.comp_cards) > 0 and len(self.player_cards) > 0 and self.turn == False and len(self.table) == 0: # выполняется, если начинает ходить компьютер
+        if len(self.comp_cards) > 0 and len(self.player_cards) > 0 and self.turn == False and len(self.table) == 0:
+            # выполняется, если начинает ходить компьютер
             print('--------Ход компьютера--------')
-            print()
             tmp_card = random.choice(self.comp_cards)
             self.table.append(tmp_card)
             self.comp_cards.remove(tmp_card)
-            return print('На столе: ', self.table[0][0])
-            self.turn = True
+            print('На столе: ', self.table[0][0])
+            self.player_turn(Durak)
 
-        elif len(self.comp_cards) > 0 and self.turn and len(self.table) != 0: # если ходил игрок, а компьютер отбивается
-            c_avble_cards_to_beat = [] # список с картами из руки, которыми можно побить
-            changed_table = []   # список [[масть, сила].....[масть, сила]...]
+        # elif len(self.comp_cards) > 0 and self.turn and len(self.table) != 0: # если ходил игрок, а компьютер отбивается
+        else:
+            c_avble_cards_to_beat = []  # список с картами из руки, которыми можно побить
+            changed_table = []  # список [[масть, сила].....[масть, сила]...]
             changed_table = copy.deepcopy(self.table)
             for i in range(len(changed_table)):
                 changed_table[i][0] = self.get_mast(Durak, changed_table[i][0])
 
             for i in range(len(self.comp_cards)):
-                if self.get_mast(Durak, self.comp_cards[i][0]) == changed_table[0][0] and self.comp_cards[i][1] > changed_table[0][1] and len(changed_table) == 1:
+                if (self.get_mast(Durak, self.comp_cards[i][0]) == changed_table[0][0] or self.get_mast(Durak,
+                    self.comp_cards[i][0]) == self.mast_kozyr) and \
+                        self.comp_cards[i][1] > changed_table[0][1] and len(self.table) == 1:
                     c_avble_cards_to_beat.append(self.comp_cards[i])
+                    # создается список с картами, которыми комп может побить
 
-            if not c_avble_cards_to_beat:
-                print('Компьюетр берет карту ')
-                self.comp_cards.append(self.table)
-                print(self.comp_cards)
-
-            self.beat_cards = []
             if len(c_avble_cards_to_beat) > 0:
-                self.beat_cards.append(random.choice(c_avble_cards_to_beat))
+                self.beat_cards = []  # список карт, которыми побили
+                card_to_beat = random.choice(c_avble_cards_to_beat)
+                self.beat_cards.append(card_to_beat)
+                self.comp_cards.remove(card_to_beat)
                 print('Карты, которыми побили ', self.beat_cards[0][0])
                 print('На столе               ', self.table[0][0])
-
-            if len(self.avble_player_cards) > 0: # self.avble_player_cards - карты, которые может подкинуть игрок
-                # (!!!!!!НЕ ЗАБЫТЬ ИСП. В ФУНКЦИИ ИГРОКА!!!!!)
-                tmp_card = input('Если хотите подкинуть выберите карту, либо введите bito')
-
+                self.table.clear()
+                self.turn = False
+                self.comp_turn(Durak)
 
 
+            else:  # если список с доступными картами пустой, то компьютер берет карту
+                print('Компьютер берет карту ')
+                self.comp_cards.append(self.table[0])
+                self.table.remove(self.table[0])
+                self.turn = True
+                self.player_turn(Durak)
+            # elif len(self.avble_player_cards) > 0: # self.avble_player_cards - карты, которые может подкинуть игрок
+            #     # (!!!!!!НЕ ЗАБЫТЬ ИСП. В ФУНКЦИИ ИГРОКА!!!!!)
+            #     input_data = input('Если хотите подкинуть выберите карту, либо введите bito ')
+            #     if input_data == 'bito':
+            #         self.turn = False
+            #         self.comp_turn(Durak)
+            #     else:
+            #         self.turn = True
+            #         self.player_turn(Durak)
+            # self.turn = True
+            self.player_turn(Durak)
+        # else: # ???? Победитель ????
+        #     self.turn = True
+        #     self.player_turn(Durak)
+        # self.turn = True
+        # self.player_turn(Durak)
 
+    def player_turn(self):
+        # ?????? Написать декоратор выдачи карт из колоды для функций начала хода ??????
+        if len(self.comp_cards) > 0 and len(self.player_cards) > 0 and self.turn and len(self.table) == 0:
+            print("-------Ваш ход-------")
+            print('Ваши карты', list((item[0] for item in self.player_cards)))
+            bool_card = ""
+            while not bool_card:
+                tmp_card = str(input('Выберите карту '))
+                for card in self.player_cards:
+                    if tmp_card == card[0]:
+                        tmp_card = card
+                        bool_card = tmp_card
+                        self.table.append(tmp_card)
+                        self.player_cards.remove(card)
+                        print('На столе: ', self.table[0][0])
+                        print('Ваши карты: ', list((item[0] for item in self.player_cards))), \
+                        print('Карты помпьютера: ', list((item[0] for item in self.comp_cards)))
+            self.turn = False
+            self.comp_turn(Durak)
 
-            # avaliable_cards_to_beat = copy.deepcopy(self.comp_cards)
-            # for i in range(len(self.comp_cards)):
-            #     if self.get_mast(Durak, self.comp_cards[i][0]) != changed_table[0][0] and avaliable_cards_to_beat[i][1] < changed_table[0][1]:
-            #         avaliable_cards_to_beat.remove(avaliable_cards_to_beat[i])
-            #         print(len(avaliable_cards_to_beat))
-            # print(avaliable_cards_to_beat)
+        elif len(self.player_cards) > 0 and self.turn == False and len(self.table) != 0:
+            avble_player_cards = []  # список с картами из руки, которыми можно побить
+            changed_table = []  # список [[масть, сила].....[масть, сила]...]
+            changed_table = copy.deepcopy(self.table)
+            for i in range(len(changed_table)):
+                changed_table[i][0] = self.get_mast(Durak, changed_table[i][0])
 
+            for i in range(len(self.player_cards)):
+                if (self.get_mast(Durak, self.player_cards[i][0]) == changed_table[0][0] or self.get_mast(Durak,
+                     self.player_cards[i][0]) == self.mast_kozyr) and \
+                        self.player_cards[i][1] > changed_table[0][1] and len(self.table) == 1:
+                    avble_player_cards.append(self.player_cards[i])
+            print('Доступные карты: ', list((item[0] for item in avble_player_cards)))
 
+            if not avble_player_cards and self.turn == False:
+                self.beat_cards = []
+                print('Вы берете карту')
+                self.player_cards.append(self.table[0])
+                self.table.clear()
+                print('Ваши карты', list((item[0] for item in self.player_cards)))
+                # self.turn = False
+                self.comp_turn(Durak)
+            else:
+                bool_card = ""
+                self.beat_cards = []
+                while not bool_card:
+                    input_data = input('Выберите карту, которой хотите побить ')
+                    for i in range(len(avble_player_cards)):
+                        if input_data == avble_player_cards[i][0]:
+                            bool_card = avble_player_cards[i]
+                            self.beat_cards.append(avble_player_cards[i])
+                            self.player_cards.remove(avble_player_cards[i])
+                            print('Карты, которыми побили ', self.beat_cards[0][0])
+                            print('На столе               ', self.table[0][0])
+                            self.table.clear()
+                            avble_player_cards.clear()
+                            break
+                self.turn = True
+                self.player_turn(Durak)
+        # else:# ???? Победитель ????
+        #     # self.turn = False
+        #     self.comp_turn(Durak)
 
+        # avaliable_cards_to_beat = copy.deepcopy(self.comp_cards)
+        # for i in range(len(self.comp_cards)):
+        #     if self.get_mast(Durak, self.comp_cards[i][0]) != changed_table[0][0] and avaliable_cards_to_beat[i][1] < changed_table[0][1]:
+        #         avaliable_cards_to_beat.remove(avaliable_cards_to_beat[i])
+        #         print(len(avaliable_cards_to_beat))
+        # print(avaliable_cards_to_beat)
 
 
 Durak.all_cards(Durak)
-Durak.gen_kozyr_list(Durak)
-Durak.gen_cards(Durak)
-Durak.whos_first_turn(Durak)
 Durak.game_start(Durak)
-Durak.comp_turn(Durak)
-
-
-
-
 
 #     def find_mast(self): # ищет правильную масть для отбивания карты
 #
@@ -194,5 +272,3 @@ Durak.comp_turn(Durak)
 #                           # выход: список карт
 #
 # # ПОЧТИ КАЖДАЯ ФУНКЦИЯ ИМЕЕТ ВАРИАЦИЮ: ДЛЯ ИГРОКА И ДЛЯ КОМПА
-
-
