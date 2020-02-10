@@ -6,15 +6,7 @@ import re
 class Durak:
     def __init__(self):  # инициализатор класса
         self.table = []
-        # self.card_type = []
-        # self.spades = []
-        # self.club = []
-        # self.hearts = []
-        # self.diamonds = []
-        # self.cards = []
-        # self.player_cards = []
-        # self.comp_cards = []
-        # self.beat_cards = []
+
 
     def all_cards(self):  # генерирует все существующие карты в колоде. выход: целая колода (36 карт)
         self.card_type = [['6', 1], ['7', 2], ['8', 3], ['9', 4], ['10', 5], ['valet', 6], ['dama', 7], ['korol', 8],
