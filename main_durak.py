@@ -142,7 +142,6 @@ class Durak:
                         print('На столе: ', self.table[0][0])
                         print('Ваши карты: ', list((item[0] for item in self.player_cards))), \
                         print('Карты помпьютера: ', list((item[0] for item in self.comp_cards)))
-            # self.turn = False
             self.comp_turn(Durak)
 
         elif len(self.player_cards) > 0 and self.turn == False and len(self.table) != 0:
@@ -185,9 +184,6 @@ class Durak:
                             break
                 self.turn = True
                 self.player_turn(Durak)
-            # self.turn = False
-            # self.comp_turn(Durak)
-
 
 Durak.all_cards(Durak)
 Durak.game_start(Durak)
