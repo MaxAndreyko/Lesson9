@@ -47,8 +47,10 @@ class Durak:
             self.comp_cards.append(comp_card)  # как и у игрока
             self.cards.remove(comp_card)
 
-        return print('Ваши карты: ', list((item[0] for item in self.player_cards))), print('Карты помпьютера: ', list(
+        print('Ваши карты: ', list((item[0] for item in self.player_cards))), print('Карты помпьютера: ', list(
             (item[0] for item in self.comp_cards))), print('Козырь: ', self.get_mast(Durak, self.kozyr[0]))
+
+        return self.player_cards, self.comp_cards
 
     def gen_kozyr_list(self):  # пересоздает список с картами, имеющие масть козыря, изменяя силу карт
         kozyr_card = random.choice(self.cards)
@@ -186,5 +188,5 @@ class Durak:
                 self.player_turn(Durak)
 
 Durak.all_cards(Durak)
-Durak.game_start(Durak)
+# Durak.game_start(Durak)
 
